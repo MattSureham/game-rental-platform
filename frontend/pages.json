@@ -75,31 +75,24 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "static/tabbar/home.png",
-        "selectedIconPath": "static/tabbar/home-active.png"
+        "text": "首页"
       },
       {
         "pagePath": "pages/product/publish",
-        "text": "发布",
-        "iconPath": "static/tabbar/publish.png",
-        "selectedIconPath": "static/tabbar/publish-active.png"
+        "text": "发布"
       },
       {
         "pagePath": "pages/order/list",
-        "text": "订单",
-        "iconPath": "static/tabbar/order.png",
-        "selectedIconPath": "static/tabbar/order-active.png"
+        "text": "订单"
       },
       {
         "pagePath": "pages/user/profile",
-        "text": "我的",
-        "iconPath": "static/tabbar/user.png",
-        "selectedIconPath": "static/tabbar/user-active.png"
+        "text": "我的"
       }
     ]
   },
-  "easycom": {
-    "uni-ui": "@dcloudio/uni-ui/lib/uni-ui/uni-ui.vue"
-  }
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
 }

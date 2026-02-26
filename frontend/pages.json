@@ -1,0 +1,105 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "游戏账号租赁"
+      }
+    },
+    {
+      "path": "pages/product/detail",
+      "style": {
+        "navigationBarTitleText": "商品详情"
+      }
+    },
+    {
+      "path": "pages/product/publish",
+      "style": {
+        "navigationBarTitleText": "发布账号"
+      }
+    },
+    {
+      "path": "pages/order/list",
+      "style": {
+        "navigationBarTitleText": "我的订单"
+      }
+    },
+    {
+      "path": "pages/order/detail",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/order/create",
+      "style": {
+        "navigationBarTitleText": "确认订单"
+      }
+    },
+    {
+      "path": "pages/user/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/user/wallet",
+      "style": {
+        "navigationBarTitleText": "我的钱包"
+      }
+    },
+    {
+      "path": "pages/user/settings",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    },
+    {
+      "path": "pages/chat/contact",
+      "style": {
+        "navigationBarTitleText": "联系方式"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "游戏账号租赁",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#00D4AA",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/product/publish",
+        "text": "发布",
+        "iconPath": "static/tabbar/publish.png",
+        "selectedIconPath": "static/tabbar/publish-active.png"
+      },
+      {
+        "pagePath": "pages/order/list",
+        "text": "订单",
+        "iconPath": "static/tabbar/order.png",
+        "selectedIconPath": "static/tabbar/order-active.png"
+      },
+      {
+        "pagePath": "pages/user/profile",
+        "text": "我的",
+        "iconPath": "static/tabbar/user.png",
+        "selectedIconPath": "static/tabbar/user-active.png"
+      }
+    ]
+  },
+  "easycom": {
+    "uni-ui": "@dcloudio/uni-ui/lib/uni-ui/uni-ui.vue"
+  }
+}

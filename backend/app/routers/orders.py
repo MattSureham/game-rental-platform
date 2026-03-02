@@ -229,6 +229,7 @@ def pay_order(
     db: Session = Depends(get_db)
 ):
     """支付订单 (模拟支付)"""
+
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(
@@ -248,15 +249,18 @@ def pay_order(
             detail="订单状态不正确"
         )
 
-    # 检查余额
-    if current_user.balance < order.total_amount:
+    # 检查余额 - 使用 float 避免 Decimal 比较问题
+    if float(current_user.balance) < float(order.total_amount):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="余额不足，请先充值"
         )
 
+    # 记录支付前余额
+    balance_before_payment = float(current_user.balance)
+
     # 扣除余额 (资金托管)
-    current_user.balance -= order.total_amount
+    current_user.balance = float(current_user.balance) - float(order.total_amount)
 
     # 更新商品状态
     product = db.query(Product).filter(Product.id == order.product_id).first()
@@ -268,15 +272,15 @@ def pay_order(
     order.start_time = now
     order.end_time = now + timedelta(hours=order.rental_hours)
 
-    # 记录资金流水
+    # 记录资金流水 - 使用正确的余额
     log = WalletLog(
         user_id=current_user.id,
         order_id=order.id,
         amount=order.total_amount,
         type="PAYMENT",
         direction="expense",
-        balance_before=current_user.balance + order.total_amount,  # 之前有余额
-        balance_after=current_user.balance,
+        balance_before=balance_before_payment,
+        balance_after=float(current_user.balance),
         description=f"支付订单 {order.order_no}"
     )
     db.add(log)
@@ -360,23 +364,21 @@ def confirm_order(
         )
 
     # 执行结算
-    # 1. 支付佣金给平台
-    # 2. 支付租金给Lender
-    # 3. 退还押金给Renter
-
     renter = db.query(User).filter(User.id == order.renter_id).first()
     lender = db.query(User).filter(User.id == order.lender_id).first()
 
     # 计算Lender收益
-    lender_income = order.rent_amount - order.commission_fee
+    lender_income = float(order.rent_amount) - float(order.commission_fee)
+
+    # 记录操作前的余额
+    lender_balance_before = float(lender.balance)
+    renter_balance_before = float(renter.balance)
 
     # Lender获得租金收入
-    lender.balance += lender_income
-    lender_frozen_before = lender.frozen_balance
-    lender.frozen_balance = 0  # 释放冻结金额
+    lender.balance = float(lender.balance) + lender_income
 
     # Renter获得押金退还
-    renter.balance += order.deposit_amount
+    renter.balance = float(renter.balance) + float(order.deposit_amount)
 
     # 记录Lender资金流水 (租金收入)
     log_lender = WalletLog(
@@ -385,24 +387,11 @@ def confirm_order(
         amount=lender_income,
         type="RENTAL_INCOME",
         direction="income",
-        balance_before=lender.balance - lender_income,
-        balance_after=lender.balance,
+        balance_before=lender_balance_before,
+        balance_after=float(lender.balance),
         description=f"订单 {order.order_no} 租金收入"
     )
     db.add(log_lender)
-
-    # 记录平台佣金流水
-    log_commission = WalletLog(
-        user_id=lender.id,
-        order_id=order.id,
-        amount=order.commission_fee,
-        type="COMMISSION",
-        direction="expense",
-        balance_before=lender.balance + lender_income,
-        balance_after=lender.balance,
-        description=f"订单 {order.order_no} 佣金"
-    )
-    db.add(log_commission)
 
     # 记录Renter押金退还流水
     log_refund = WalletLog(
@@ -411,8 +400,8 @@ def confirm_order(
         amount=order.deposit_amount,
         type="DEPOSIT_REFUND",
         direction="income",
-        balance_before=renter.balance - order.deposit_amount,
-        balance_after=renter.balance,
+        balance_before=renter_balance_before,
+        balance_after=float(renter.balance),
         description=f"订单 {order.order_no} 押金退还"
     )
     db.add(log_refund)
